@@ -38,7 +38,7 @@ public interface ImprovedFullscreenConfig extends Config
 	)
 	default boolean fullscreenOnStartup()
 	{
-		return false;
+		return true;
 	}
 
 	@ConfigItem(
