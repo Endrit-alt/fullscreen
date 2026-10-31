@@ -22,7 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package dekvall.fullscreen;
+package com.endrit.improvedfullscreen;
 
 import com.google.inject.Provides;
 import java.awt.BasicStroke;
@@ -75,16 +75,17 @@ import net.runelite.client.util.OSType;
 	name = "Improved Fullscreen",
 	description = "Borderless or exclusive fullscreen. Offers to turn off RuneLite's custom window chrome, and restores it when turned off.",
 	tags = {"window", "monitor", "borderless", "exclusive"},
-	internalName = "fullscreen",
+	internalName = "improvedfullscreen",
+	conflicts = {"Fullscreen"},
 	enabledByDefault = false
 )
-public class FullscreenPlugin extends Plugin
+public class ImprovedFullscreenPlugin extends Plugin
 {
 	@Inject private Client client;
 	@Inject private ClientUI clientUI;
 	@Inject private ConfigManager configManager;
 	@Inject private KeyManager keyManager;
-	@Inject private FullscreenConfig config;
+	@Inject private ImprovedFullscreenConfig config;
 	@Inject private ClientToolbar clientToolbar;
 	@Inject private ClientThread clientThread;
 	@Inject private PluginManager pluginManager;
@@ -223,12 +224,12 @@ public class FullscreenPlugin extends Plugin
 		}
 		if (config.lastFullscreenMode() != shown)
 		{
-			configManager.setConfiguration("Fullscreen", "lastFullscreenMode", shown);
+			configManager.setConfiguration("improvedfullscreen", "lastFullscreenMode", shown);
 		}
 		updatingModeSelection = true;
 		try
 		{
-			configManager.setConfiguration("Fullscreen", "fullscreenMode", Mode.WINDOWED);
+			configManager.setConfiguration("improvedfullscreen", "fullscreenMode", Mode.WINDOWED);
 		}
 		finally
 		{
@@ -247,7 +248,7 @@ public class FullscreenPlugin extends Plugin
 
 	StartupRecovery createStartupRecovery() throws IOException
 	{
-		// .runelite/plugin-data/fullscreen/startup-<profile>, through RuneLite's Filepath.
+		// .runelite/plugin-data/improvedfullscreen/startup-<profile>, through RuneLite's Filepath.
 		return new StartupRecovery(getPluginDirectory().joinSegment("startup-" + currentProfileId()));
 	}
 
@@ -265,7 +266,7 @@ public class FullscreenPlugin extends Plugin
 			// Leave "Fullscreen on startup" on: the window is unchanged and nothing failed.
 			if (chrome == ChromeBlock.SETTING_ON && !config.customChromeStartupOfferShown())
 			{
-				configManager.setConfiguration("Fullscreen", "customChromeStartupOfferShown", true);
+				configManager.setConfiguration("improvedfullscreen", "customChromeStartupOfferShown", true);
 				offerToDisableCustomChrome(true);
 			}
 			else
@@ -277,7 +278,7 @@ public class FullscreenPlugin extends Plugin
 		if (config.customChromeStartupOfferShown())
 		{
 			// Custom chrome is off now; if it is turned on again, offer once more.
-			configManager.setConfiguration("Fullscreen", "customChromeStartupOfferShown", false);
+			configManager.setConfiguration("improvedfullscreen", "customChromeStartupOfferShown", false);
 		}
 		try
 		{
@@ -290,7 +291,7 @@ public class FullscreenPlugin extends Plugin
 				if (result == StartupRecovery.Result.RECOVERED)
 				{
 					// Only if the launch check raced with another client that left a marker.
-					configManager.setConfiguration("Fullscreen", "fullscreenOnStartup", false);
+					configManager.setConfiguration("improvedfullscreen", "fullscreenOnStartup", false);
 					report(new IllegalStateException(INTERRUPTED_CHANGE + INTERRUPTED_STARTUP_OFF + INTERRUPTED_ADVICE));
 				}
 				else
@@ -339,7 +340,7 @@ public class FullscreenPlugin extends Plugin
 		boolean startup = config.fullscreenOnStartup();
 		if (startup)
 		{
-			configManager.setConfiguration("Fullscreen", "fullscreenOnStartup", false);
+			configManager.setConfiguration("improvedfullscreen", "fullscreenOnStartup", false);
 		}
 		report(new IllegalStateException(INTERRUPTED_CHANGE + (startup ? INTERRUPTED_STARTUP_OFF : "") + INTERRUPTED_ADVICE));
 		return true;
@@ -577,14 +578,14 @@ public class FullscreenPlugin extends Plugin
 		{
 			// Remember only modes that were actually entered. A rejected selection must
 			// not become the mode the hotkey and toolbar retry.
-			configManager.setConfiguration("Fullscreen", "lastFullscreenMode", actual);
+			configManager.setConfiguration("improvedfullscreen", "lastFullscreenMode", actual);
 		}
 		if (actual != null && config.fullscreenMode() != actual)
 		{
 			updatingModeSelection = true;
 			try
 			{
-				configManager.setConfiguration("Fullscreen", "fullscreenMode", actual);
+				configManager.setConfiguration("improvedfullscreen", "fullscreenMode", actual);
 			}
 			finally
 			{
@@ -705,7 +706,7 @@ public class FullscreenPlugin extends Plugin
 
 	void disableCustomChrome()
 	{
-		configManager.setConfiguration("Fullscreen", "customChromeDisabledByPlugin", true);
+		configManager.setConfiguration("improvedfullscreen", "customChromeDisabledByPlugin", true);
 		configManager.setConfiguration("runelite", "uiEnableCustomChrome", false);
 		log.info("Turned off RuneLite's custom window chrome for fullscreen; it applies after a restart");
 	}
@@ -720,11 +721,11 @@ public class FullscreenPlugin extends Plugin
 		{
 			return;
 		}
-		configManager.setConfiguration("Fullscreen", "customChromeDisabledByPlugin", false);
+		configManager.setConfiguration("improvedfullscreen", "customChromeDisabledByPlugin", false);
 		if (!runeLiteConfig().enableCustomChrome())
 		{
 			configManager.setConfiguration("runelite", "uiEnableCustomChrome", true);
-			configManager.setConfiguration("Fullscreen", "customChromeRestoredSession", clientSession());
+			configManager.setConfiguration("improvedfullscreen", "customChromeRestoredSession", clientSession());
 			log.info("Restored RuneLite's custom window chrome; it applies after a restart");
 			// Shown once fullscreen has exited: leaving borderless recreates the window,
 			// which would also close a dialog it owns.
@@ -775,7 +776,7 @@ public class FullscreenPlugin extends Plugin
 		{
 			return;
 		}
-		configManager.setConfiguration("Fullscreen", "customChromeRestoredSession", 0L);
+		configManager.setConfiguration("improvedfullscreen", "customChromeRestoredSession", 0L);
 		if (restoredIn == clientSession() && runeLiteConfig().enableCustomChrome())
 		{
 			disableCustomChrome();
@@ -795,7 +796,7 @@ public class FullscreenPlugin extends Plugin
 			&& "true".equals(event.getNewValue()) && config.customChromeDisabledByPlugin())
 		{
 			// The user turned custom chrome on again themselves; never undo their choice later.
-			configManager.setConfiguration("Fullscreen", "customChromeDisabledByPlugin", false);
+			configManager.setConfiguration("improvedfullscreen", "customChromeDisabledByPlugin", false);
 			return;
 		}
 		if ("runelite".equals(event.getGroup()) && !"clientBounds".equals(event.getKey())
@@ -822,13 +823,13 @@ public class FullscreenPlugin extends Plugin
 			}));
 			return;
 		}
-		if ("Fullscreen".equals(event.getGroup()) && "fullscreenMode".equals(event.getKey()) && updatingModeSelection)
+		if ("improvedfullscreen".equals(event.getGroup()) && "fullscreenMode".equals(event.getKey()) && updatingModeSelection)
 		{
 			return;
 		}
 		boolean windowKey = "fullscreenMode".equals(event.getKey()) || "monitorTarget".equals(event.getKey())
 			|| "preferredMonitor".equals(event.getKey());
-		if ("Fullscreen".equals(event.getGroup()) && windowKey && currentProfileId() != sessionProfile)
+		if ("improvedfullscreen".equals(event.getGroup()) && windowKey && currentProfileId() != sessionProfile)
 		{
 			// ConfigManager.switchProfile posts the new profile's differing values before
 			// ProfileChanged. Those are saved preferences, not requests to change the window.
@@ -837,7 +838,7 @@ public class FullscreenPlugin extends Plugin
 		}
 		boolean modeChanged = "fullscreenMode".equals(event.getKey());
 		boolean monitorChanged = "monitorTarget".equals(event.getKey()) || "preferredMonitor".equals(event.getKey());
-		if ("Fullscreen".equals(event.getGroup()) && (modeChanged || monitorChanged))
+		if ("improvedfullscreen".equals(event.getGroup()) && (modeChanged || monitorChanged))
 		{
 			onEdt(() ->
 			{
@@ -988,8 +989,8 @@ public class FullscreenPlugin extends Plugin
 			updatingMonitorSelection = true;
 			try
 			{
-				configManager.setConfiguration("Fullscreen", "preferredMonitor", choice.deviceId);
-				configManager.setConfiguration("Fullscreen", "monitorTarget", choice.target);
+				configManager.setConfiguration("improvedfullscreen", "preferredMonitor", choice.deviceId);
+				configManager.setConfiguration("improvedfullscreen", "monitorTarget", choice.target);
 			}
 			finally
 			{
@@ -1013,7 +1014,7 @@ public class FullscreenPlugin extends Plugin
 			// settled, the marker keeps watching for native crashes, but an unrelated error
 			// (for example a manual mode change) must not turn startup entry off.
 			finishStartup(true);
-			configManager.setConfiguration("Fullscreen", "fullscreenOnStartup", false);
+			configManager.setConfiguration("improvedfullscreen", "fullscreenOnStartup", false);
 			ex = new IllegalStateException(ex.getMessage() + "\nFullscreen on startup has been turned off.", ex);
 		}
 		log.warn("Unable to change fullscreen mode", ex);
@@ -1140,8 +1141,8 @@ public class FullscreenPlugin extends Plugin
 	}
 
 	@Provides
-	FullscreenConfig provideConfig(ConfigManager manager)
+	ImprovedFullscreenConfig provideConfig(ConfigManager manager)
 	{
-		return manager.getConfig(FullscreenConfig.class);
+		return manager.getConfig(ImprovedFullscreenConfig.class);
 	}
 }

@@ -1,4 +1,4 @@
-package dekvall.fullscreen;
+package com.endrit.improvedfullscreen;
 
 import java.util.function.Consumer;
 import javax.swing.SwingUtilities;

@@ -1,4 +1,4 @@
-package dekvall.fullscreen;
+package com.endrit.improvedfullscreen;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

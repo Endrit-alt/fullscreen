@@ -1,12 +1,12 @@
-package dekvall.fullscreen;
+package com.endrit.improvedfullscreen;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Keybind;
 
-@ConfigGroup("Fullscreen")
-public interface FullscreenConfig extends Config
+@ConfigGroup("improvedfullscreen")
+public interface ImprovedFullscreenConfig extends Config
 {
 	@ConfigItem(
 		keyName = "fullscreenMode",

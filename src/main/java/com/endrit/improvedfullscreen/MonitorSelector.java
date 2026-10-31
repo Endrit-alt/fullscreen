@@ -1,4 +1,4 @@
-package dekvall.fullscreen;
+package com.endrit.improvedfullscreen;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
