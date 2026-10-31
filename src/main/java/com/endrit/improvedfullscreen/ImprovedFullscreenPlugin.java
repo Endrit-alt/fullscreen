@@ -76,8 +76,7 @@ import net.runelite.client.util.OSType;
 	description = "Borderless or exclusive fullscreen. Offers to turn off RuneLite's custom window chrome, and restores it when turned off.",
 	tags = {"window", "monitor", "borderless", "exclusive"},
 	internalName = "improved-fullscreen",
-	conflicts = {"Fullscreen"},
-	enabledByDefault = false
+	conflicts = {"Fullscreen"}
 )
 public class ImprovedFullscreenPlugin extends Plugin
 {
