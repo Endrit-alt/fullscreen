@@ -88,8 +88,7 @@ display when there are more than two monitors.
 Borderless monitor changes keep the existing undecorated fullscreen window instead
 of exiting and re-entering fullscreen. Selecting the same display leaves its bounds
 unchanged. This avoids temporary decoration changes that can disturb game-canvas
-alignment. Desktop regression tests check the heavyweight canvas edges beside a
-sidebar across repeated monitor changes.
+alignment.
 
 The selected display identifier is saved with the RuneLite configuration profile.
 If it is unavailable, entry uses the current monitor; reconnecting it makes the
@@ -197,12 +196,7 @@ and [typing after F11/errors (RuneLite #20600)](https://github.com/runelite/rune
 The shared issue tracker also contains unrelated plugins; those are outside this
 Fullscreen repository.
 
-## Build and test
-
-The development launcher enables assertions only for this plugin, so debug
-assertions in installed hub plugins do not interrupt unrelated key handling.
-Slow UI-thread dispatch and fullscreen transition duration are logged to help
-distinguish a blocked UI from a renderer restart wait.
+## Build
 
 Use a JDK, Java 11 or newer:
 
@@ -210,38 +204,10 @@ Use a JDK, Java 11 or newer:
 .\gradlew.bat clean build
 ```
 
-The plugin JAR is written to `build/libs/fullscreen-1.5.jar`. Launch a development RuneLite client with this plugin:
-
-```powershell
-.\gradlew.bat run
-```
-
-On Windows, opt into the desktop smoke tests, which open and close temporary test
-windows:
-
-```powershell
-.\gradlew.bat clean build -PnativeTest=true
-```
-
-Tests cover transition ordering, overlapping requests, mode changes during GPU
-release, shutdown and retries, renderer timeouts, active renderer restoration,
-negative monitor coordinates, exclusive-device ownership, and typing after a
-rejected hotkey toggle. Custom chrome tests cover the offer, Cancel, the one-time
-startup offer that keeps startup fullscreen on, restoring on plugin shutdown (with its message), turning the plugin off and on
-again with and without a restart, and never undoing a setting the user changed. The exit button is tested to appear only
-while fullscreen, above the other sidebar buttons, and to close through RuneLite's
-normal window-closing path. Windows desktop tests open real windows
-and check monitor coverage, canvas alignment beside a sidebar, sidebar resize
-correction, repeated monitor moves, exclusive mode, and restoration of normal and
-maximized placement, resize lock and always-on-top, using Java APIs only.
-Additional regressions cover rejected mode switches, failed rollback recovery,
-hotkey rebinding, input off the EDT, stale session actions, closed-window cleanup,
-and failed renderer shutdown. Physical monitor hotplug still needs manual
-validation.
+The plugin JAR is written to `build/libs/fullscreen-1.5.jar`.
 
 ## Validation limits and recovery
 
-The regression suite (116 tests) passes on Java 11 and Java 21.
 Live gameplay with GPU/117 HD, mixed-DPI multi-monitor hardware, ShaderGlass,
 macOS, and Linux still need manual validation. Borderless replaces the window's
 native surface, which is the operation historically associated with graphics-driver
