@@ -75,7 +75,7 @@ import net.runelite.client.util.OSType;
 	name = "Improved Fullscreen",
 	description = "Borderless or exclusive fullscreen. Offers to turn off RuneLite's custom window chrome, and restores it when turned off.",
 	tags = {"window", "monitor", "borderless", "exclusive"},
-	internalName = "improvedfullscreen",
+	internalName = "improved-fullscreen",
 	conflicts = {"Fullscreen"},
 	enabledByDefault = false
 )
@@ -248,7 +248,7 @@ public class ImprovedFullscreenPlugin extends Plugin
 
 	StartupRecovery createStartupRecovery() throws IOException
 	{
-		// .runelite/plugin-data/improvedfullscreen/startup-<profile>, through RuneLite's Filepath.
+		// .runelite/plugin-data/improved-fullscreen/startup-<profile>, through RuneLite's Filepath.
 		return new StartupRecovery(getPluginDirectory().joinSegment("startup-" + currentProfileId()));
 	}
 
