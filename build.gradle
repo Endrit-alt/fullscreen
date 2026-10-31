@@ -3,30 +3,42 @@ plugins {
 }
 
 repositories {
-	mavenLocal()
+	mavenCentral()
 	maven {
 		url = 'https://repo.runelite.net'
 	}
-	mavenCentral()
 }
 
-def runeLiteVersion = 'latest.release'
+def runeLiteVersion = '1.13.3'
 
 dependencies {
-    compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
+	compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+	compileOnly 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-
-    testImplementation 'junit:junit:4.12'
-    testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
-    testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'org.mockito:mockito-inline:4.11.0'
+	testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
 }
 
 group = 'dekvall.fullscreen'
-version = '1.2'
+version = '1.5'
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
-    options.release.set(11)
+	options.release.set(11)
+}
+
+test {
+	useJUnit()
+	systemProperty 'fullscreen.nativeTest', providers.gradleProperty('nativeTest').map { it.toBoolean() }.getOrElse(false)
+}
+
+tasks.register('run', JavaExec) {
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'dekvall.fullscreen.FullscreenPluginTest'
+	// Keep assertions for this plugin without changing behavior of installed hub plugins.
+	jvmArgs '-ea:dekvall.fullscreen...', '-ea:net.runelite.client.externalplugins.ExternalPluginManager',
+		'-ea:net.runelite.client.RuneLite'
 }
